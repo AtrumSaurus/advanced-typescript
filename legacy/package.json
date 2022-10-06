@@ -1,11 +1,11 @@
 {
-  "name": "cool-project",
+  "name": "legacy",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "lint": "eslint **/*.js --fix",
-    "start": "node example.js"
+    "start": "node index.js"
   },
   "engines": {
     "node": ">=8.10.0"
