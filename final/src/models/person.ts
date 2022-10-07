@@ -12,11 +12,7 @@ export interface PersonData extends Pick<User, "id"| "name"> {
   relationship?: PersonData;
 }
 
-export interface HydratedPersonData extends PersonData {
-  related: PersonData['id'] | null;
-}
-
-export interface Admin extends HydratedPersonData {
+export interface Admin extends PersonData {
   acting: Role.admin;
   roleName: Role.admin;
 }

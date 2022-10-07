@@ -3,11 +3,14 @@ import {
   Admin,
   getAllByType,
   getPerson,
-  HydratedPersonData,
   PersonData,
   Role,
   updatePerson,
 } from "./models/person";
+
+export interface HydratedPersonData extends PersonData {
+  related: PersonData['id'] | null;
+}
 
 interface PersonDataDTOResponse {
   users: HydratedPersonData[];
@@ -46,30 +49,26 @@ const seed = async (): Promise<PersonData[]> => {
 const fakeGetRestApiEndpoint = async (): Promise<PersonDataDTOResponse> => {
   const people = await seed();
 
-  const hydrated: HydratedPersonData[] = people.map(p => {
+  let users = getAllByType<PersonData>(people, 'user');
+  let admins = getAllByType<Admin>(people, "admin")
+
+  const hydratedUsers: HydratedPersonData[] = users.map(p => {
     const newP: HydratedPersonData = { ...p, related: null };
-
-    if (p.id === 1 || p.id === 2) {
-      newP.roleName = Role.admin;
-    }
-    if (p.id === 1) {
-      newP.acting = Role.admin;
-    }
-    if (p.id === 3 && people[0]) {
-      newP.relationship = people[0];
-    }
-
     newP.related = p.relationship?.id ?? null;
 
     return newP;
   });
 
-  const users = getAllByType<HydratedPersonData>(hydrated, 'user');
-  const admins = getAllByType<Admin>(hydrated, "admin");
+  const hydratedAdmins: HydratedPersonData[] = admins.map(p => {
+    const newP: HydratedPersonData = { ...p, related: null };
+    newP.related = p.relationship?.id ?? null;
+
+    return newP;
+  });
 
   return {
-    users,
-    admins,
+    users: hydratedUsers,
+    admins: hydratedAdmins,
   };
 };
 
